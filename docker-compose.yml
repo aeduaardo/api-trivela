@@ -1,0 +1,42 @@
+version: '3'
+volumes:
+  db_database: 
+networks:
+  db:
+  flask-app:
+services:
+  database:
+    container_name: db_mysql
+    image: mysql:5.7
+    volumes:
+      - db_database:/var/lib/mysql
+      - ./database/:/database
+    environment:
+      MYSQL_USER: aeduaardo
+      MYSQL_PASSWORD: aeduaardo
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_HOST: database
+      MYSQL_DATABASE: ligatrivela
+    ports:
+      - 3306:3306
+    networks:
+      - db
+  app:
+    build: app
+    container_name: app
+    volumes:
+      - ./app/src:/src
+    environment:
+      FLASK_DEBUG: 1
+      MYSQL_USER: aeduaardo
+      MYSQL_PASSWORD: aeduaardo
+      MYSQL_HOST: database
+      MYSQL_DATABASE: ligatrivela
+    ports:
+      - 80:5000
+    networks:
+      - db
+      - flask-app
+    depends_on:
+        - database
+
